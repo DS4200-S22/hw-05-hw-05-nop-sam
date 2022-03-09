@@ -190,23 +190,26 @@ d3.csv("data/iris.csv").then((data) => {
   }
   //TODO: Barchart with counts of different species
   {
+    xKey3 = "Species"
+    yKey3 = "Count"
 
     // Hardcoded barchart data
     const data1 = [
-      {Species: 'Setosa', score: 50},
-      {Species: 'Versicolor', score: 50},
-      {Species: 'Virginica', score: 50}
+      {Species: 'setosa', Count: 50},
+      {Species: 'versicolor', Count: 50},
+      {Species: 'virginica', Count: 50}
     ];
+    
 
-    maxY3 = d3.max(data1, function(d) { return d.score; });
+    maxY3 = d3.max(data1, function(d) { return d[yKey3]; });
 
     // Create y scale
-    yScale3 = d3.scaleLinear()
+    y3 = d3.scaleLinear()
                 .domain([0,maxY3])
                 .range([height-margin.bottom,margin.top]);
 
     // Create x scale
-    xScale3 = d3.scaleBand()
+    x3 = d3.scaleBand()
                 .domain(d3.range(data1.length))
                 .range([margin.left, width - margin.right])
                 .padding(0.1);
@@ -214,25 +217,38 @@ d3.csv("data/iris.csv").then((data) => {
     // Add y axis to webpage
     svg3.append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
-      .call(d3.axisLeft(yScale3))
-      .attr("font-size", '20px');
+      .call(d3.axisLeft(y3))
+      .attr("font-size", '20px')
+      .call((g) => g.append("text")
+                      .attr("x", 0)
+                      .attr("y", margin.top)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text(yKey3));
 
     // Add x axis to webpage
     svg3.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale3)
-                .tickFormat(i => data1[i].Species))
-        .attr("font-size", '20px');
+        .call(d3.axisBottom(x3)
+                .tickFormat(i => data1[i][xKey3]))
+        .attr("font-size", '20px')
+        .call((g) => g.append("text")
+                      .attr("x", 0)
+                      .attr("y", margin.bottom)
+                      .attr("fill", "black")
+                      .attr("text-anchor", "end")
+                      .text(xKey3));
+        
     bar3 = svg3.selectAll(".bar")
               .data(data1)
               .enter()
               .append("rect")
                 .attr("class", "bar")
-                .attr("x", (d,i) => xScale3(i))
-                .attr("y", (d) => yScale3(d.score))
-                .attr("height", (d) => (height - margin.bottom) - yScale3(d.score))
-                .attr("width", xScale3.bandwidth())
-                .attr("fill", (d) => color(d.Species))
+                .attr("x", (d,i) => x3(i))
+                .attr("y", (d) => y3(d[yKey3]))
+                .attr("height", (d) => (height - margin.bottom) - y3(d[yKey3]))
+                .attr("width", x3.bandwidth())
+                .attr("fill", (d) => color(d[xKey3]))
                 .attr("opacity", 0.5);
   }
 
@@ -274,7 +290,7 @@ d3.csv("data/iris.csv").then((data) => {
     myCircles2.classed("border", (d) => {
       let brushed = isBrushed(extent, x2(d[xKey2]), y2(d[yKey2]))
       if (brushed) {
-        selected_species.add(d.Species)
+        selected_species.add(d[xKey3])
       }
       return brushed
       ;
@@ -288,7 +304,7 @@ d3.csv("data/iris.csv").then((data) => {
 
     //TODO: Give bold outline to all bars in bar chart with corresponding to species selected by Scatterplot2 brush
     bar3.classed("border", (d) => {
-      return selected_species.has(d["Species"]);
+      return selected_species.has(d[xKey3]);
     })
 
 
