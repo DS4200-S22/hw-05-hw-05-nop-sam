@@ -256,8 +256,12 @@ d3.csv("data/iris.csv").then((data) => {
 
   // Call to removes existing brushes
   function clear() {
-      svg1.call(brush1.move, null);
-      svg2.call(brush2.move, null);
+      svg1.append('g')
+          .on("start brush", updateChart1)
+          .call(brush1.move, null);
+      svg2.append('g')
+          .on("start brush", updateChart2)
+          .call(brush2.move, null);
   }
 
   // Call when Scatterplot1 is brushed
@@ -274,6 +278,7 @@ d3.csv("data/iris.csv").then((data) => {
     myCircles2.classed("border", (d) => {
       return isBrushed(extent, x1(d[xKey1]), y1(d[yKey1]));
     });
+
   }
 
   // Call when Scatterplot2 is brushed
@@ -294,6 +299,8 @@ d3.csv("data/iris.csv").then((data) => {
       }
       return brushed
       ;
+
+      clear();
     });
 
 
