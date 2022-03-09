@@ -270,6 +270,7 @@ d3.csv("data/iris.csv").then((data) => {
     var selected_species = new Set()
 
     //TODO: Give bold outline to all points within the brush region in Scatterplot2 & collected names of brushed species
+    
     myCircles2.classed("border", (d) => {
       let brushed = isBrushed(extent, x2(d[xKey2]), y2(d[yKey2]))
       if (brushed) {
@@ -279,11 +280,6 @@ d3.csv("data/iris.csv").then((data) => {
       ;
     });
 
-    myCircles2.classed("id", (d) => {
-      if (!selected_species.has(d.Species)) {
-        selected_species.add(d.Species);
-      }
-    });
 
     //TODO: Give bold outline to all points in Scatterplot1 corresponding to points within the brush region in Scatterplot2
     myCircles1.classed("border", (d) => {
